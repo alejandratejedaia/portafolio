@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portafolio | Alejandra Tejeda · IA Business Architect</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Montserrat:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --charcoal: #2B2B2B;
+  --terra: #A03300;
+  --terra2: #C04000;
+  --hueso: #F5F5DC;
+  --crema: #EFEBE9;
+  --gold: #C5A059;
+  --white: #fff;
+  --muted: #6B5B4E;
+  --muted2: #9C8475;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--crema);
+  color:var(--charcoal);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+}
+
+/* EDITOR BAR */
+#editor-bar{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:var(--charcoal);border-bottom:3px solid var(--terra);
+  padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  font-size:12px;transform:translateY(-100%);transition:transform 0.3s;
+}
+#editor-bar.visible{transform:translateY(0);}
+#editor-bar span{color:#888;font-family:'Inter',sans-serif;}
+.eb-btn{
+  padding:7px 16px;border-radius:6px;border:none;cursor:pointer;
+  font-size:12px;font-weight:600;font-family:'Montserrat',sans-serif;transition:all 0.2s;
+}
+.eb-toggle{background:var(--terra);color:#fff;}
+.eb-toggle:hover{background:var(--terra2);}
+.eb-export{background:#2d7a3a;color:#fff;}
+.eb-export:hover{background:#1f5a2a;}
+.eb-hint{color:#666;font-size:11px;margin-left:auto;}
+
+/* FLOAT BTN */
+#float-btn{
+  position:fixed;bottom:24px;right:24px;z-index:9998;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--terra);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;box-shadow:0 4px 20px rgba(160,51,0,0.35);
+  transition:all 0.2s;font-family:'Inter',sans-serif;
+}
+#float-btn:hover{transform:scale(1.08);background:var(--terra2);}
+#float-btn.active{background:var(--gold);}
+
+/* EDIT MODE */
+body.edit-mode [data-editable]{
+  outline:2px dashed rgba(160,51,0,0.4);border-radius:2px;
+  cursor:text;transition:outline 0.15s;
+}
+body.edit-mode [data-editable]:hover{outline:2px solid var(--terra);background:rgba(160,51,0,0.05);}
+body.edit-mode [data-editable]:focus{outline:2px solid var(--terra2);background:rgba(160,51,0,0.07);}
+.section-toggle{display:none;align-items:center;gap:6px;margin-bottom:10px;}
+body.edit-mode .section-toggle{display:flex;}
+.section-toggle label{font-size:11px;color:var(--muted2);cursor:pointer;font-family:'Montserrat',sans-serif;}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--charcoal);
+  padding:0 2.5rem;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:top 0.3s;
+}
+body.edit-mode nav{top:44px;}
+.nav-logo{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;
+  color:var(--crema);text-decoration:none;letter-spacing:0.5px;
+}
+.nav-logo span{color:var(--terra);}
+.nav-handle{
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;
+  color:var(--terra);letter-spacing:1px;
+}
+.nav-links{display:flex;gap:2rem;align-items:center;}
+.nav-links a{
+  font-size:12px;font-family:'Montserrat',sans-serif;font-weight:600;
+  color:rgba(245,245,220,0.6);text-decoration:none;letter-spacing:0.5px;transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--crema);}
+.nav-cta{
+  padding:8px 18px;border:1.5px solid var(--terra);border-radius:4px;
+  color:var(--terra) !important;transition:all 0.2s !important;
+}
+.nav-cta:hover{background:var(--terra) !important;color:#fff !important;}
+
+/* HERO */
+.hero{
+  padding:110px 2.5rem 70px;max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 300px;gap:4rem;align-items:center;
+  position:relative;
+}
+body.edit-mode .hero{padding-top:150px;}
+
+/* Decorative elements */
+.deco-line-v{
+  position:absolute;left:0;top:80px;bottom:0;
+  width:5px;background:var(--terra);border-radius:0 3px 3px 0;
+}
+.deco-circle{
+  position:absolute;right:-30px;top:-20px;
+  width:200px;height:200px;border-radius:50%;
+  border:40px solid var(--hueso);opacity:0.12;pointer-events:none;
+}
+.deco-num{
+  position:absolute;right:320px;bottom:20px;
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:96px;
+  color:var(--terra2);opacity:0.07;line-height:1;pointer-events:none;
+  user-select:none;
+}
+
+.hero-eyebrow{
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+  color:var(--terra);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;
+}
+.hero-divider{height:2px;background:var(--terra);width:48px;margin-bottom:16px;}
+.hero h1{
+  font-family:'Oswald',sans-serif;font-weight:700;
+  font-size:clamp(36px,4.5vw,54px);line-height:1.05;
+  color:var(--charcoal);letter-spacing:-0.5px;margin-bottom:1rem;
+}
+.hero h1 .hl{color:var(--terra2);}
+.hero-sub{
+  font-family:'Montserrat',sans-serif;font-size:15px;font-weight:400;
+  color:var(--muted);max-width:480px;margin-bottom:2rem;line-height:1.75;
+}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--terra);color:#fff;text-decoration:none;
+  padding:13px 26px;border-radius:4px;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:0.5px;transition:all 0.2s;
+}
+.btn-primary:hover{background:var(--terra2);transform:translateY(-1px);}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1.5px solid var(--terra);color:var(--terra);text-decoration:none;
+  padding:12px 24px;border-radius:4px;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:0.5px;transition:all 0.2s;
+}
+.btn-ghost:hover{background:var(--terra);color:#fff;}
+
+/* PHOTO */
+.hero-photo{position:relative;display:flex;justify-content:center;}
+.photo-wrap{
+  width:240px;height:240px;border-radius:50%;
+  border:3px solid var(--terra);padding:5px;
+  position:relative;background:var(--crema);
+}
+.photo-wrap::before{
+  content:'';position:absolute;inset:-12px;border-radius:50%;
+  border:1px solid var(--gold);opacity:0.3;
+}
+.photo-wrap::after{
+  content:'';position:absolute;inset:-22px;border-radius:50%;
+  border:1px solid var(--terra);opacity:0.1;
+}
+.photo-wrap img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center top;}
+.photo-badge{
+  position:absolute;bottom:10px;right:-10px;
+  background:var(--charcoal);border:2px solid var(--terra);
+  border-radius:8px;padding:8px 14px;
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+  color:var(--crema);letter-spacing:0.5px;white-space:nowrap;
+}
+.photo-badge span{color:var(--terra);display:block;font-size:9px;margin-top:1px;}
+
+/* STATS BAR */
+.stats-bar{
+  background:var(--charcoal);padding:0;
+  border-top:3px solid var(--terra);border-bottom:3px solid var(--terra);
+}
+.stats-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);
+}
+.stat-item{
+  padding:1.75rem 1.5rem;text-align:center;
+  border-right:1px solid rgba(245,245,220,0.08);
+}
+.stat-item:last-child{border-right:none;}
+.stat-num{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:32px;
+  color:var(--terra);line-height:1;
+}
+.stat-label{
+  font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;
+  color:rgba(245,245,220,0.5);margin-top:6px;letter-spacing:0.3px;
+}
+
+/* PROJECTS SECTION */
+.projects-section{max-width:1100px;margin:0 auto;padding:80px 2.5rem;}
+.section-eyebrow{
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+  color:var(--terra);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;
+}
+.section-divider{height:2px;background:var(--terra);width:48px;margin-bottom:14px;}
+.section-title{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:36px;
+  color:var(--charcoal);margin-bottom:.5rem;
+}
+.section-sub{
+  font-family:'Montserrat',sans-serif;font-size:14px;
+  color:var(--muted);max-width:580px;line-height:1.7;margin-bottom:3rem;
+}
+
+/* PROJECT CARD */
+.project-card{
+  background:var(--crema);
+  border:1px solid rgba(160,51,0,0.15);
+  border-left:5px solid var(--terra);
+  border-radius:0 8px 8px 0;
+  margin-bottom:1.5rem;overflow:hidden;
+  transition:border-color 0.2s, box-shadow 0.2s;
+  position:relative;
+}
+.project-card:hover{
+  border-color:var(--terra);
+  box-shadow:0 4px 24px rgba(160,51,0,0.1);
+}
+.project-card.hidden-card{opacity:0.3;border-style:dashed;}
+
+.card-header{
+  padding:1.75rem 1.75rem 1.75rem 1.5rem;cursor:pointer;
+  display:grid;grid-template-columns:auto 1fr auto;gap:1.25rem;align-items:start;
+}
+.card-icon{
+  width:46px;height:46px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+  background:rgba(160,51,0,0.08);border:1px solid rgba(160,51,0,0.15);
+}
+.card-pill{
+  display:inline-block;
+  background:var(--terra);color:#fff;
+  font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;
+  padding:3px 10px;border-radius:100px;letter-spacing:0.5px;
+  margin-bottom:6px;text-transform:uppercase;
+}
+.card-title{
+  font-family:'Oswald',sans-serif;font-weight:600;font-size:20px;
+  color:var(--charcoal);margin-bottom:6px;line-height:1.2;
+}
+.card-desc{
+  font-family:'Inter',sans-serif;font-size:13px;color:var(--muted);line-height:1.65;
+}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.tag{
+  font-size:10px;font-family:'Montserrat',sans-serif;font-weight:600;
+  padding:3px 10px;border-radius:100px;
+  border:1px solid rgba(160,51,0,0.25);color:var(--terra);
+  background:rgba(160,51,0,0.06);
+}
+.tag-gold{border-color:rgba(197,160,89,0.4);color:var(--gold);background:rgba(197,160,89,0.08);}
+.card-toggle{
+  width:32px;height:32px;border-radius:6px;
+  border:1.5px solid rgba(160,51,0,0.25);background:transparent;
+  color:var(--terra);cursor:pointer;font-size:20px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all 0.2s;
+}
+.card-toggle:hover{background:var(--terra);color:#fff;border-color:var(--terra);}
+
+/* CARD BODY */
+.card-body{display:none;border-top:1px solid rgba(160,51,0,0.12);background:var(--hueso);}
+.card-body.open{display:block;}
+.card-body-inner{
+  padding:1.75rem;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;
+}
+.detail-label{
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+  color:var(--terra);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.6rem;
+}
+.detail-text{font-family:'Inter',sans-serif;font-size:13px;color:var(--muted);line-height:1.7;}
+
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:.5rem;}
+.flow-step{
+  background:var(--crema);border:1px solid rgba(160,51,0,0.2);border-radius:4px;
+  padding:4px 10px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;
+  color:var(--charcoal);
+}
+.flow-arrow{color:var(--terra);font-size:14px;font-weight:700;}
+
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:.5rem;}
+.impact-item{
+  background:var(--crema);border:1px solid rgba(160,51,0,0.15);
+  border-top:3px solid var(--terra);border-radius:0 0 6px 6px;padding:14px;
+}
+.impact-num{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;color:var(--terra);
+}
+.impact-label{font-family:'Montserrat',sans-serif;font-size:10px;color:var(--muted2);margin-top:2px;font-weight:600;}
+
+.stack-list{display:flex;flex-direction:column;gap:8px;}
+.stack-item{display:flex;align-items:center;gap:10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--muted);}
+.stack-dot{width:5px;height:5px;background:var(--terra);border-radius:50%;flex-shrink:0;}
+
+.detail-section{margin-bottom:1.25rem;}
+
+/* ABOUT */
+.about-section{background:var(--charcoal);padding:80px 2.5rem;position:relative;overflow:hidden;}
+.about-deco{
+  position:absolute;right:-60px;top:-60px;
+  width:280px;height:280px;border-radius:50%;
+  border:50px solid var(--hueso);opacity:0.05;
+}
+.about-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;position:relative;}
+.about-eyebrow{
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+  color:var(--terra);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;
+}
+.about-divider{height:2px;background:var(--terra);width:48px;margin-bottom:14px;}
+.about-title{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:32px;
+  color:var(--crema);line-height:1.15;margin-bottom:1.25rem;
+}
+.about-text{
+  font-family:'Inter',sans-serif;font-size:14px;
+  color:rgba(245,245,220,0.65);line-height:1.8;margin-bottom:1rem;
+}
+.skills-title{
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+  color:var(--terra);letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;
+}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.skill-chip{
+  background:rgba(245,245,220,0.05);
+  border:1px solid rgba(245,245,220,0.1);
+  border-left:3px solid var(--terra);
+  border-radius:0 6px 6px 0;padding:8px 12px;
+  font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;
+  color:rgba(245,245,220,0.7);transition:all 0.2s;
+}
+.skill-chip:hover{background:rgba(160,51,0,0.15);border-color:var(--terra);color:var(--crema);}
+
+/* HANDLE */
+.handle{
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;
+  color:var(--terra);letter-spacing:0.5px;margin-top:1.5rem;
+}
+
+/* GOLD DIVIDER */
+.gold-divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.4;margin:0 2.5rem;}
+
+/* FOOTER */
+footer{
+  background:var(--charcoal);padding:1.75rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+  border-top:1px solid rgba(245,245,220,0.08);
+}
+.footer-logo{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;color:var(--crema);
+}
+.footer-logo span{color:var(--terra);}
+footer p{font-family:'Inter',sans-serif;font-size:12px;color:rgba(245,245,220,0.4);}
+footer a{color:var(--terra);text-decoration:none;}
+
+/* EXPORT MODAL */
+#export-modal{
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:rgba(0,0,0,0.8);align-items:center;justify-content:center;
+}
+#export-modal.show{display:flex;}
+.modal-box{
+  background:var(--charcoal);border:2px solid var(--terra);border-radius:8px;
+  padding:2rem;width:90%;max-width:720px;max-height:82vh;
+  display:flex;flex-direction:column;gap:1rem;
+}
+.modal-box h3{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;color:var(--crema);
+}
+.modal-box p{font-family:'Inter',sans-serif;font-size:13px;color:rgba(245,245,220,0.5);}
+#code-output{
+  background:#0a0a0a;border:1px solid rgba(160,51,0,0.3);border-radius:6px;
+  padding:1rem;font-family:monospace;font-size:11px;color:#c5a059;
+  overflow-y:auto;flex:1;white-space:pre-wrap;word-break:break-all;max-height:380px;
+}
+.modal-actions{display:flex;gap:10px;align-items:center;}
+.modal-btn{
+  padding:10px 20px;border-radius:4px;border:none;cursor:pointer;
+  font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;
+}
+.btn-copy{background:var(--terra);color:#fff;}
+.btn-copy:hover{background:var(--terra2);}
+.btn-close{background:rgba(245,245,220,0.08);color:rgba(245,245,220,0.6);border:1px solid rgba(245,245,220,0.1);}
+.btn-close:hover{color:var(--crema);}
+.copied-msg{color:#4ade80;font-size:12px;font-family:'Montserrat',sans-serif;font-weight:600;display:none;}
+
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;text-align:center;}
+  .hero-photo{order:-1;}
+  .photo-wrap{width:160px;height:160px;}
+  .stats-inner{grid-template-columns:repeat(2,1fr);}
+  .card-body-inner{grid-template-columns:1fr;}
+  .about-inner{grid-template-columns:1fr;}
+  .impact-grid{grid-template-columns:1fr;}
+  .skills-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .deco-num,.deco-line-v,.deco-circle{display:none;}
+}
+
+/* FORMAT TOOLBAR */
+#fmt-toolbar {
+  position:fixed;z-index:99998;
+  background:var(--charcoal);border:1.5px solid var(--terra);
+  border-radius:8px;padding:6px 10px;
+  display:none;align-items:center;gap:6px;flex-wrap:wrap;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  pointer-events:auto;
+}
+#fmt-toolbar.visible{display:flex;}
+.fmt-sep{width:1px;height:20px;background:rgba(245,245,220,0.12);margin:0 2px;}
+.fmt-btn{
+  background:transparent;border:1px solid rgba(245,245,220,0.1);
+  border-radius:4px;color:rgba(245,245,220,0.8);
+  cursor:pointer;padding:4px 8px;font-size:12px;
+  font-family:'Montserrat',sans-serif;font-weight:600;
+  transition:all 0.15s;white-space:nowrap;min-width:28px;
+  display:flex;align-items:center;justify-content:center;
+}
+.fmt-btn:hover{background:rgba(245,245,220,0.1);border-color:var(--terra);color:var(--crema);}
+.fmt-btn.active{background:var(--terra);border-color:var(--terra);color:#fff;}
+.fmt-select{
+  background:rgba(245,245,220,0.05);border:1px solid rgba(245,245,220,0.15);
+  border-radius:4px;color:rgba(245,245,220,0.8);padding:3px 6px;
+  font-size:12px;font-family:'Montserrat',sans-serif;cursor:pointer;
+  outline:none;
+}
+.fmt-select:focus{border-color:var(--terra);}
+.fmt-colors{display:flex;gap:4px;align-items:center;}
+.fmt-color{
+  width:18px;height:18px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:all 0.15s;flex-shrink:0;
+}
+.fmt-color:hover{transform:scale(1.2);border-color:rgba(245,245,220,0.5);}
+.fmt-color.selected{border-color:#fff;transform:scale(1.1);}
+.fmt-label{font-size:10px;color:rgba(245,245,220,0.35);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;}
+</style>
+</head>
+<body>
+
+<!-- EDITOR BAR -->
+<div id="editor-bar">
+  <button class="eb-btn eb-toggle" onclick="toggleEdit()">✏️ Modo Edición: ON</button>
+  <span>Haz click en cualquier texto para editarlo directamente</span>
+  <button class="eb-btn eb-export" onclick="showExport()">⬇️ Exportar HTML limpio</button>
+  <span class="eb-hint">Exporta cuando termines — los cambios no se guardan solos</span>
+</div>
+
+<!-- FLOAT BTN -->
+<button id="float-btn" onclick="toggleEdit()" title="Modo edición">✏️</button>
+
+<!-- NAV -->
+<nav>
+  <a href="https://alejandraia.com" class="nav-logo">Ale<span>IA</span></a>
+  <div class="nav-handle">@aletejeda.ia</div>
+  <div class="nav-links">
+    <a href="https://alejandraia.com">Inicio</a>
+    <a href="#proyectos">Proyectos</a>
+    <a href="#sobre-mi">Sobre mí</a>
+    <a href="https://alejandraia.com/contacto" class="nav-cta">Contacto</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="deco-line-v"></div>
+  <div class="deco-num">01</div>
+
+  <div class="hero-content">
+    <div class="section-toggle">
+      <input type="checkbox" id="t-hero" checked onchange="toggleEl('hero-inner',this)">
+      <label for="t-hero">Mostrar hero</label>
+    </div>
+    <div id="hero-inner">
+      <div class="hero-eyebrow" data-editable contenteditable="false">Portafolio · IA Business Architect</div>
+      <div class="hero-divider"></div>
+      <h1><span data-editable contenteditable="false">Sistemas de</span> <span class="hl" data-editable contenteditable="false">IA</span><br><span data-editable contenteditable="false">que mueven negocios</span></h1>
+      <p class="hero-sub" data-editable contenteditable="false">Diseño e implemento arquitecturas de automatización e inteligencia artificial que eliminan cuellos de botella, multiplican el alcance operativo y generan resultados medibles — sin necesidad de código.</p>
+      <div class="hero-cta">
+        <a href="#proyectos" class="btn-primary">Ver proyectos →</a>
+        <a href="https://www.linkedin.com/in/alejandratejeda" class="btn-ghost" target="_blank">LinkedIn ↗</a>
+      </div>
+      <div class="handle">@aletejeda.ia</div>
+    </div>
+  </div>
+
+  <div class="hero-photo">
+    <div class="photo-wrap">
+      <img src="data:image/png;base64,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" alt="Alejandra Tejeda">
+    </div>
+    <div class="photo-badge">
+      AI Business Architect
+      <span>@aletejeda.ia</span>
+    </div>
+    <div class="deco-circle"></div>
+  </div>
+</section>
+
+<!-- GOLD DIVIDER -->
+<div class="gold-divider"></div>
+
+<!-- STATS -->
+<div class="stats-bar" id="stats-wrap">
+  <div class="section-toggle" style="justify-content:center;padding:10px 0 0;background:var(--charcoal);">
+    <input type="checkbox" id="t-stats" checked onchange="toggleEl('stats-wrap',this,true)">
+    <label for="t-stats" style="color:rgba(245,245,220,0.4);">Mostrar estadísticas</label>
+  </div>
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div class="stat-num" data-editable contenteditable="false">4</div>
+      <div class="stat-label" data-editable contenteditable="false">Sistemas de IA implementados</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-editable contenteditable="false">15</div>
+      <div class="stat-label" data-editable contenteditable="false">Países coordinados LATAM</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-editable contenteditable="false">80%</div>
+      <div class="stat-label" data-editable contenteditable="false">Reducción tiempo operativo</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-editable contenteditable="false">3–5x</div>
+      <div class="stat-label" data-editable contenteditable="false">Multiplicación alcance comercial</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<section class="projects-section" id="proyectos">
+  <div class="section-eyebrow" data-editable contenteditable="false">Portafolio de proyectos</div>
+  <div class="section-divider"></div>
+  <h2 class="section-title" data-editable contenteditable="false">Sistemas de IA en producción</h2>
+  <p class="section-sub" data-editable contenteditable="false">Arquitecturas reales diseñadas e implementadas en xpd global — empresa de logística internacional con presencia en NAM y LATAM.</p>
+
+  <!-- P1 -->
+  <div class="project-card" id="card-p1">
+    <div class="section-toggle" style="padding:12px 1.5rem 0;">
+      <input type="checkbox" id="t-p1" checked onchange="toggleCard('card-p1',this)">
+      <label for="t-p1">Mostrar Proyecto 01</label>
+    </div>
+    <div class="card-header" onclick="toggle('p1')">
+      <div class="card-icon">🤖</div>
+      <div>
+        <div class="card-pill" data-editable contenteditable="false">Proyecto 01 · Automatización</div>
+        <div class="card-title" data-editable contenteditable="false">AI Content Generation Agent</div>
+        <div class="card-desc" data-editable contenteditable="false">Pipeline automatizado end-to-end para generación de casos de éxito — desde formulario hasta entregable listo para producción.</div>
+        <div class="card-tags">
+          <span class="tag" data-editable contenteditable="false">Google Forms</span>
+          <span class="tag" data-editable contenteditable="false">Make.com</span>
+          <span class="tag" data-editable contenteditable="false">Google Drive</span>
+          <span class="tag" data-editable contenteditable="false">LLM</span>
+        </div>
+      </div>
+      <button class="card-toggle" id="toggle-p1">+</button>
+    </div>
+    <div class="card-body" id="p1">
+      <div class="card-body-inner">
+        <div>
+          <div class="detail-section">
+            <div class="detail-label">Problema</div>
+            <div class="detail-text" data-editable contenteditable="false">La creación de cada caso de éxito requería una semana de trabajo humano: entrevistas, redacción, revisiones y coordinación entre equipos.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Flujo del sistema</div>
+            <div class="flow">
+              <span class="flow-step" data-editable contenteditable="false">Forms</span><span class="flow-arrow">→</span>
+              <span class="flow-step" data-editable contenteditable="false">Make.com</span><span class="flow-arrow">→</span>
+              <span class="flow-step" data-editable contenteditable="false">LLM</span><span class="flow-arrow">→</span>
+              <span class="flow-step" data-editable contenteditable="false">Drive</span><span class="flow-arrow">→</span>
+              <span class="flow-step" data-editable contenteditable="false">Diseño</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Cómo funciona</div>
+            <div class="detail-text" data-editable contenteditable="false">El stakeholder responde un formulario con preguntas clave. Make.com dispara la automatización: crea una carpeta en Drive con material multimedia y genera una primera propuesta de redacción. El equipo solo ajusta el 20% restante.</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-section">
+            <div class="detail-label">Impacto</div>
+            <div class="impact-grid">
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">80%</div><div class="impact-label" data-editable contenteditable="false">Reducción tiempo producción</div></div>
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">5d → 2d</div><div class="impact-label" data-editable contenteditable="false">De semana a 48 hrs máximo</div></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Stack tecnológico</div>
+            <div class="stack-list">
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Google Forms — trigger de entrada</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Make.com — orquestador del flujo</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">LLM / GPT — generación de redacción</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Google Drive — organización de assets</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="project-card" id="card-p2">
+    <div class="section-toggle" style="padding:12px 1.5rem 0;">
+      <input type="checkbox" id="t-p2" checked onchange="toggleCard('card-p2',this)">
+      <label for="t-p2">Mostrar Proyecto 02</label>
+    </div>
+    <div class="card-header" onclick="toggle('p2')">
+      <div class="card-icon">🌡️</div>
+      <div>
+        <div class="card-pill" data-editable contenteditable="false">Proyecto 02 · People Analytics</div>
+        <div class="card-title" data-editable contenteditable="false">Culture Intelligence System</div>
+        <div class="card-desc" data-editable contenteditable="false">Sistema automatizado de medición de cultura organizacional a escala global con anonimización, segmentación regional y visualización semáforo.</div>
+        <div class="card-tags">
+          <span class="tag" data-editable contenteditable="false">Power Automate</span>
+          <span class="tag" data-editable contenteditable="false">Microsoft Teams</span>
+          <span class="tag" data-editable contenteditable="false">SharePoint</span>
+          <span class="tag tag-gold" data-editable contenteditable="false">Global</span>
+        </div>
+      </div>
+      <button class="card-toggle" id="toggle-p2">+</button>
+    </div>
+    <div class="card-body" id="p2">
+      <div class="card-body-inner">
+        <div>
+          <div class="detail-section">
+            <div class="detail-label">Problema</div>
+            <div class="detail-text" data-editable contenteditable="false">El equipo de Cultura Global no lograba obtener un panorama claro del estado organizacional. Las encuestas por correo tenían tasa de respuesta mínima.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Flujo</div>
+            <div class="flow">
+              <span class="flow-step" data-editable contenteditable="false">Scheduler</span><span class="flow-arrow">→</span>
+              <span class="flow-step" data-editable contenteditable="false">Teams Card</span><span class="flow-arrow">→</span>
+              <span class="flow-step" data-editable contenteditable="false">SharePoint</span><span class="flow-arrow">→</span>
+              <span class="flow-step" data-editable contenteditable="false">Semáforo</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Cómo funciona</div>
+            <div class="detail-text" data-editable contenteditable="false">Una vez al mes, Power Automate envía automáticamente una card interactiva en Teams con 4 preguntas. Respuestas anónimas en SharePoint segmentadas por equipo y región, generando semáforo de clima en tiempo real.</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-section">
+            <div class="detail-label">Impacto</div>
+            <div class="impact-grid">
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">Global</div><div class="impact-label" data-editable contenteditable="false">Cobertura multi-región</div></div>
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">↑ TR</div><div class="impact-label" data-editable contenteditable="false">Respuesta vs email</div></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Stack</div>
+            <div class="stack-list">
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Power Automate — orquestador y scheduler</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Microsoft Teams — canal de encuesta</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">SharePoint — almacén anónimo de respuestas</span></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Stakeholder</div>
+            <div class="detail-text" data-editable contenteditable="false">Equipo de Cultura Global — xpd global</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 -->
+  <div class="project-card" id="card-p3" style="border-left-color:var(--gold);">
+    <div class="section-toggle" style="padding:12px 1.5rem 0;">
+      <input type="checkbox" id="t-p3" checked onchange="toggleCard('card-p3',this)">
+      <label for="t-p3">Mostrar Proyecto 03</label>
+    </div>
+    <div class="card-header" onclick="toggle('p3')">
+      <div class="card-icon" style="background:rgba(197,160,89,0.1);border-color:rgba(197,160,89,0.25);">⚡</div>
+      <div>
+        <div class="card-pill" style="background:var(--gold);" data-editable contenteditable="false">Proyecto 03 · Flagship · Revenue</div>
+        <div class="card-title" data-editable contenteditable="false">AI Sales Engine — Modelo Centauro</div>
+        <div class="card-desc" data-editable contenteditable="false">Sistema de prospección comercial con IA de 9 fases para el mercado NAM (USA + Canadá) — multiplica el alcance del equipo 3–5x sin aumentar headcount.</div>
+        <div class="card-tags">
+          <span class="tag" data-editable contenteditable="false">Claude API</span>
+          <span class="tag" data-editable contenteditable="false">Power Automate</span>
+          <span class="tag" data-editable contenteditable="false">Apollo.io</span>
+          <span class="tag" data-editable contenteditable="false">Perplexity API</span>
+          <span class="tag tag-gold" data-editable contenteditable="false">Panjiva</span>
+        </div>
+      </div>
+      <button class="card-toggle" id="toggle-p3">+</button>
+    </div>
+    <div class="card-body" id="p3">
+      <div class="card-body-inner">
+        <div>
+          <div class="detail-section">
+            <div class="detail-label">Problema</div>
+            <div class="detail-text" data-editable contenteditable="false">6 vendedores para cubrir todo el mercado de USA y Canadá. Prospección manual: 2–3 horas por vendedor al día. Resultado: bajo alcance, correos genéricos y reuniones sin contexto.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Arquitectura — 9 fases</div>
+            <div class="flow" style="flex-direction:column;align-items:flex-start;gap:6px;">
+              <div style="display:flex;align-items:center;gap:8px;"><span class="flow-step">ICP + Panjiva</span><span class="flow-arrow">→</span><span style="font-size:12px;color:var(--muted);">Definición y extracción de prospectos</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span class="flow-step">Apollo.io</span><span class="flow-arrow">→</span><span style="font-size:12px;color:var(--muted);">Enriquecimiento automático</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span class="flow-step">Claude API</span><span class="flow-arrow">→</span><span style="font-size:12px;color:var(--muted);">Correos + Lead Scoring</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span class="flow-step">Perplexity</span><span class="flow-arrow">→</span><span style="font-size:12px;color:var(--muted);">Brief pre-reunión automático</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-section">
+            <div class="detail-label">Impacto</div>
+            <div class="impact-grid">
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">3–5x</div><div class="impact-label" data-editable contenteditable="false">Alcance comercial multiplicado</div></div>
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">~18h</div><div class="impact-label" data-editable contenteditable="false">Prospección diaria eliminada</div></div>
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">~$110</div><div class="impact-label" data-editable contenteditable="false">Costo mensual sistema USD</div></div>
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">8 → 4</div><div class="impact-label" data-editable contenteditable="false">Herramientas consolidadas</div></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Stack</div>
+            <div class="stack-list">
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Claude API (Anthropic) — redacción y scoring</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Power Automate — orquestador principal</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Apollo.io — enriquecimiento + outreach</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Perplexity API — Sales Research Agent</span></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Sponsor</div>
+            <div class="detail-text" data-editable contenteditable="false">Gustavo Ramírez · Director Comercial NAM — xpd global</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P4 -->
+  <div class="project-card" id="card-p4">
+    <div class="section-toggle" style="padding:12px 1.5rem 0;">
+      <input type="checkbox" id="t-p4" checked onchange="toggleCard('card-p4',this)">
+      <label for="t-p4">Mostrar Proyecto 04</label>
+    </div>
+    <div class="card-header" onclick="toggle('p4')">
+      <div class="card-icon">🎬</div>
+      <div>
+        <div class="card-pill" data-editable contenteditable="false">Proyecto 04 · Creative AI</div>
+        <div class="card-title" data-editable contenteditable="false">Video Prompt Engineering System</div>
+        <div class="card-desc" data-editable contenteditable="false">GPT personalizado que guía al equipo creativo para generar prompts óptimos para Veo 3, reduciendo el ciclo de ideación de 2 horas a menos de 30 minutos.</div>
+        <div class="card-tags">
+          <span class="tag" data-editable contenteditable="false">GPT Personalizado</span>
+          <span class="tag" data-editable contenteditable="false">Veo 3</span>
+          <span class="tag" data-editable contenteditable="false">Prompt Engineering</span>
+        </div>
+      </div>
+      <button class="card-toggle" id="toggle-p4">+</button>
+    </div>
+    <div class="card-body" id="p4">
+      <div class="card-body-inner">
+        <div>
+          <div class="detail-section">
+            <div class="detail-label">Problema</div>
+            <div class="detail-text" data-editable contenteditable="false">El equipo de video perdía 2+ horas por sesión intentando obtener resultados de calidad en Veo 3. Sin estructura de prompts, los resultados eran inconsistentes.</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Cómo funciona</div>
+            <div class="detail-text" data-editable contenteditable="false">Un GPT personalizado guía al usuario con máximo 6 preguntas con opciones predefinidas — tipo de escena, ambiente, estilo, movimiento de cámara. Al completar entrega el prompt optimizado para Veo 3 listo para ejecutar.</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-section">
+            <div class="detail-label">Impacto</div>
+            <div class="impact-grid">
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">2h → 30m</div><div class="impact-label" data-editable contenteditable="false">Ciclo ideación-resultado</div></div>
+              <div class="impact-item"><div class="impact-num" data-editable contenteditable="false">0</div><div class="impact-label" data-editable contenteditable="false">Conocimiento técnico requerido</div></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Stack</div>
+            <div class="stack-list">
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">ChatGPT — plataforma del GPT personalizado</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Prompt Engineering estructurado — 6 preguntas</span></div>
+              <div class="stack-item"><span class="stack-dot"></span><span data-editable contenteditable="false">Veo 3 (Google) — generación de video final</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- ABOUT -->
+<section class="about-section" id="sobre-mi">
+  <div class="about-deco"></div>
+  <div class="about-inner">
+    <div>
+      <div class="section-toggle">
+        <input type="checkbox" id="t-about" checked onchange="toggleEl('about-left',this)">
+        <label for="t-about" style="color:rgba(245,245,220,0.4);">Mostrar Sobre mí</label>
+      </div>
+      <div id="about-left">
+        <div class="about-eyebrow" data-editable contenteditable="false">Sobre mí</div>
+        <div class="about-divider"></div>
+        <h2 class="about-title" data-editable contenteditable="false">AI Architect sin código.<br>Con impacto real.</h2>
+        <p class="about-text" data-editable contenteditable="false">Soy Alejandra Tejeda — AI Business Architect y estratega con 10 años de experiencia en marketing regional para LATAM. Diseño sistemas de automatización e inteligencia artificial que resuelven problemas reales de negocio, sin necesidad de programación.</p>
+        <p class="about-text" data-editable contenteditable="false">Mi enfoque: entender el problema de negocio primero, elegir el stack correcto después, e implementar con criterio técnico y sensibilidad estratégica.</p>
+        <div style="margin-top:1.75rem;">
+          <a href="https://alejandraia.com/contacto" class="btn-primary">Trabajemos juntos →</a>
+        </div>
+        <div class="handle" style="margin-top:1.25rem;">@aletejeda.ia</div>
+      </div>
+    </div>
+    <div>
+      <div class="skills-title">Herramientas y tecnologías</div>
+      <div class="skills-grid">
+        <div class="skill-chip" data-editable contenteditable="false">Make.com</div>
+        <div class="skill-chip" data-editable contenteditable="false">Power Automate</div>
+        <div class="skill-chip" data-editable contenteditable="false">Claude API</div>
+        <div class="skill-chip" data-editable contenteditable="false">GPT / ChatGPT</div>
+        <div class="skill-chip" data-editable contenteditable="false">Gemini</div>
+        <div class="skill-chip" data-editable contenteditable="false">Perplexity API</div>
+        <div class="skill-chip" data-editable contenteditable="false">Apollo.io</div>
+        <div class="skill-chip" data-editable contenteditable="false">Veo 3 / Sora</div>
+        <div class="skill-chip" data-editable contenteditable="false">Midjourney</div>
+        <div class="skill-chip" data-editable contenteditable="false">SharePoint</div>
+        <div class="skill-chip" data-editable contenteditable="false">Microsoft Teams</div>
+        <div class="skill-chip" data-editable contenteditable="false">Prompt Engineering</div>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <div class="skills-title">Idiomas</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <div class="skill-chip" style="font-size:12px;" data-editable contenteditable="false">🇲🇽 Español nativo</div>
+          <div class="skill-chip" style="font-size:12px;" data-editable contenteditable="false">🇺🇸 Inglés 100%</div>
+          <div class="skill-chip" style="font-size:12px;" data-editable contenteditable="false">🇧🇷 Portugués A1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Ale<span>IA</span></div>
+  <p>© 2026 <span data-editable contenteditable="false">Alejandra Tejeda Gómez</span> · <a href="https://alejandraia.com">alejandraia.com</a> · <a href="mailto:hola@alejandraia.com">hola@alejandraia.com</a></p>
+  <div class="handle">@aletejeda.ia</div>
+</footer>
+
+<!-- EXPORT MODAL -->
+<div id="export-modal">
+  <div class="modal-box">
+    <h3>📋 HTML exportado — listo para Hostinger</h3>
+    <p>Copia este código y reemplaza el archivo en tu servidor. Incluye todos tus cambios y ediciones.</p>
+    <div id="code-output"></div>
+    <div class="modal-actions">
+      <button class="modal-btn btn-copy" onclick="copyCode()">Copiar código completo</button>
+      <button class="modal-btn btn-close" onclick="closeExport()">Cerrar</button>
+      <span class="copied-msg" id="copied-msg">✓ ¡Copiado!</span>
+    </div>
+  </div>
+</div>
+
+<script>
+var editMode=false;
+function toggleEdit(){
+  editMode=!editMode;
+  document.body.classList.toggle('edit-mode',editMode);
+  var bar=document.getElementById('editor-bar');
+  var btn=document.getElementById('float-btn');
+  bar.classList.toggle('visible',editMode);
+  btn.classList.toggle('active',editMode);
+  btn.textContent=editMode?'✕':'✏️';
+  document.querySelectorAll('[data-editable]').forEach(function(el){
+    el.contentEditable=editMode?'true':'false';
+  });
+}
+function toggleEl(id,cb){
+  var el=document.getElementById(id);
+  if(el){el.style.opacity=cb.checked?'':'0.25';el.setAttribute('data-hidden',cb.checked?'false':'true');}
+}
+function toggleCard(id,cb){
+  var el=document.getElementById(id);
+  if(el){el.style.opacity=cb.checked?'':'0.25';el.setAttribute('data-hidden',cb.checked?'false':'true');}
+}
+function toggle(id){
+  var b=document.getElementById(id);
+  var btn=document.getElementById('toggle-'+id);
+  var o=b.classList.contains('open');
+  document.querySelectorAll('.card-body').forEach(function(x){x.classList.remove('open');});
+  document.querySelectorAll('.card-toggle').forEach(function(x){x.textContent='+';});
+  if(!o){b.classList.add('open');btn.textContent='−';}
+}
+function generateCleanHTML(){
+  var clone=document.documentElement.cloneNode(true);
+  ['#editor-bar','#float-btn','#export-modal'].forEach(function(sel){
+    var el=clone.querySelector(sel);if(el)el.remove();
+  });
+  clone.querySelectorAll('.section-toggle').forEach(function(el){el.remove();});
+  clone.querySelector('body').classList.remove('edit-mode');
+  clone.querySelectorAll('[data-hidden="true"]').forEach(function(el){el.style.display='none';});
+  clone.querySelectorAll('[contenteditable]').forEach(function(el){el.removeAttribute('contenteditable');});
+  clone.querySelectorAll('script').forEach(function(s){s.remove();});
+  var s=document.createElement('script');
+  s.textContent='function toggle(id){var b=document.getElementById(id);var btn=document.getElementById("toggle-"+id);var o=b.classList.contains("open");document.querySelectorAll(".card-body").forEach(function(x){x.classList.remove("open");});document.querySelectorAll(".card-toggle").forEach(function(x){x.textContent="+";});if(!o){b.classList.add("open");btn.textContent="−";}}';
+  clone.querySelector('body').appendChild(s);
+  return '<!DOCTYPE html>\n'+clone.outerHTML;
+}
+function showExport(){
+  document.getElementById('code-output').textContent=generateCleanHTML();
+  document.getElementById('export-modal').classList.add('show');
+}
+function closeExport(){document.getElementById('export-modal').classList.remove('show');}
+function copyCode(){
+  navigator.clipboard.writeText(document.getElementById('code-output').textContent).then(function(){
+    var m=document.getElementById('copied-msg');m.style.display='inline';
+    setTimeout(function(){m.style.display='none';},2500);
+  });
+}
+document.getElementById('export-modal').addEventListener('click',function(e){if(e.target===this)closeExport();});
+
+// FORMAT TOOLBAR
+var savedRange = null;
+
+function saveSelection() {
+  var sel = window.getSelection();
+  if (sel && sel.rangeCount > 0) {
+    savedRange = sel.getRangeAt(0).cloneRange();
+  }
+}
+
+function restoreSelection() {
+  if (savedRange) {
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedRange);
+  }
+}
+
+function fmtExec(cmd) {
+  restoreSelection();
+  document.execCommand(cmd, false, null);
+  updateToolbarState();
+}
+
+function fmtSize(size) {
+  if (!size) return;
+  restoreSelection();
+  var sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return;
+  var range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+  var span = document.createElement('span');
+  span.style.fontSize = size;
+  try {
+    range.surroundContents(span);
+  } catch(e) {
+    var frag = range.extractContents();
+    span.appendChild(frag);
+    range.insertNode(span);
+  }
+  // Reset select
+  setTimeout(function(){ document.getElementById('fmt-size').value = ''; }, 50);
+}
+
+function fmtAlign(align) {
+  restoreSelection();
+  document.execCommand('justify' + align.charAt(0).toUpperCase() + align.slice(1), false, null);
+}
+
+function fmtColor(hex) {
+  restoreSelection();
+  document.execCommand('foreColor', false, hex);
+  document.querySelectorAll('.fmt-color').forEach(function(el){el.classList.remove('selected');});
+  event.target.classList.add('selected');
+}
+
+function updateToolbarState() {
+  document.getElementById('fmt-b').classList.toggle('active', document.queryCommandState('bold'));
+  document.getElementById('fmt-i').classList.toggle('active', document.queryCommandState('italic'));
+}
+
+function positionToolbar(x, y) {
+  var tb = document.getElementById('fmt-toolbar');
+  var tbW = 520;
+  var left = Math.min(x, window.innerWidth - tbW - 10);
+  left = Math.max(left, 10);
+  var top = y - 52;
+  if (top < 60) top = y + 20;
+  tb.style.left = left + 'px';
+  tb.style.top = top + 'px';
+}
+
+document.addEventListener('mouseup', function(e) {
+  if (!editMode) return;
+  if (e.target.closest('#fmt-toolbar') || e.target.closest('#editor-bar')) return;
+  setTimeout(function() {
+    var sel = window.getSelection();
+    if (sel && sel.toString().length > 0) {
+      saveSelection();
+      var range = sel.getRangeAt(0);
+      var rect = range.getBoundingClientRect();
+      positionToolbar(rect.left + window.scrollX, rect.top + window.scrollY);
+      document.getElementById('fmt-toolbar').classList.add('visible');
+      updateToolbarState();
+    } else {
+      document.getElementById('fmt-toolbar').classList.remove('visible');
+    }
+  }, 10);
+});
+
+document.addEventListener('mousedown', function(e) {
+  if (e.target.closest('#fmt-toolbar')) return;
+  document.getElementById('fmt-toolbar').classList.remove('visible');
+});
+
+document.addEventListener('keyup', function(e) {
+  if (!editMode) return;
+  var sel = window.getSelection();
+  if (sel && sel.toString().length > 0) updateToolbarState();
+});
+
+</script>
+
+<!-- FORMAT TOOLBAR -->
+<div id="fmt-toolbar">
+  <span class="fmt-label">TEXTO</span>
+  <div class="fmt-sep"></div>
+  <button class="fmt-btn" id="fmt-b" onclick="fmtExec('bold')" title="Negrita"><b>B</b></button>
+  <button class="fmt-btn" id="fmt-i" onclick="fmtExec('italic')" title="Cursiva"><i>I</i></button>
+  <div class="fmt-sep"></div>
+  <span class="fmt-label">TAMAÑO</span>
+  <select class="fmt-select" id="fmt-size" onchange="fmtSize(this.value)" title="Tamaño de fuente">
+    <option value="">—</option>
+    <option value="10px">10</option>
+    <option value="11px">11</option>
+    <option value="12px">12</option>
+    <option value="13px">13</option>
+    <option value="14px">14</option>
+    <option value="15px">15</option>
+    <option value="16px">16</option>
+    <option value="18px">18</option>
+    <option value="20px">20</option>
+    <option value="22px">22</option>
+    <option value="24px">24</option>
+    <option value="28px">28</option>
+    <option value="32px">32</option>
+    <option value="36px">36</option>
+    <option value="42px">42</option>
+  </select>
+  <div class="fmt-sep"></div>
+  <span class="fmt-label">ALINEACIÓN</span>
+  <button class="fmt-btn" onclick="fmtAlign('left')" title="Izquierda">⬅</button>
+  <button class="fmt-btn" onclick="fmtAlign('center')" title="Centro">☰</button>
+  <button class="fmt-btn" onclick="fmtAlign('right')" title="Derecha">➡</button>
+  <div class="fmt-sep"></div>
+  <span class="fmt-label">COLOR</span>
+  <div class="fmt-colors">
+    <div class="fmt-color" style="background:#2B2B2B;" onclick="fmtColor('#2B2B2B')" title="Charcoal"></div>
+    <div class="fmt-color" style="background:#A03300;" onclick="fmtColor('#A03300')" title="Terracota"></div>
+    <div class="fmt-color" style="background:#C04000;" onclick="fmtColor('#C04000')" title="Terracota 2"></div>
+    <div class="fmt-color" style="background:#C5A059;" onclick="fmtColor('#C5A059')" title="Dorado"></div>
+    <div class="fmt-color" style="background:#F5F5DC;" onclick="fmtColor('#F5F5DC')" title="Hueso"></div>
+    <div class="fmt-color" style="background:#EFEBE9;" onclick="fmtColor('#EFEBE9')" title="Crema"></div>
+    <div class="fmt-color" style="background:#6B5B4E;" onclick="fmtColor('#6B5B4E')" title="Muted"></div>
+    <div class="fmt-color" style="background:#ffffff;border:1px solid rgba(245,245,220,0.2);" onclick="fmtColor('#ffffff')" title="Blanco"></div>
+  </div>
+</div>
+
+</body>
+</html>
